@@ -23,7 +23,7 @@ public class VeiculoService {
         return this.veiculoRepository.findAll();
     }
 
-//    public Optional<Veiculo> listarVeiculoId(Long id){
-//        return this.veiculoRepository.findById(id);
-//    }
+    public Optional<Veiculo> listarVeiculoId(Long id){
+        return this.veiculoRepository.findById(id);
+    }
 }

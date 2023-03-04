@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 //@Controller
@@ -34,8 +35,14 @@ public class VeiculoController {
         return this.veiculoService.listarTodos();
     }
 
-//    @GetMapping("/by/{id}")
-//    public List<Veiculo> listarVeiculoId(@PathVariable("id") Long id){
-//        return this.veiculoService.listarVeiculoId(id);
-//    }
+    @GetMapping("/by/{id}")
+    public ResponseEntity<Veiculo> listarVeiculoId(@PathVariable("id") Long id){
+        Optional<Veiculo> optionalVeiculo = this.veiculoService.listarVeiculoId(id);
+
+        if(optionalVeiculo.isPresent()){
+            return ResponseEntity.ok(optionalVeiculo.get());
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+    }
 }
