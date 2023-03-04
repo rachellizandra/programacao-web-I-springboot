@@ -3,6 +3,8 @@ package br.com.ada.programacaowebisb.controller;
 import br.com.ada.programacaowebisb.model.Veiculo;
 import br.com.ada.programacaowebisb.service.VeiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +17,16 @@ public class VeiculoController {
     private VeiculoService veiculoService;
 
     @PostMapping("/cadastrar")
-    public void createVeiculo(@RequestBody Veiculo veiculo) {
-        this.veiculoService.createVeiculo(veiculo);
+    public ResponseEntity<String> createVeiculo(@RequestBody Veiculo veiculo) {
+        try{
+            this.veiculoService.createVeiculo(veiculo);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body("Veículo cadastrado!");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
     @GetMapping("/listar")
@@ -24,8 +34,8 @@ public class VeiculoController {
         return this.veiculoService.listarTodos();
     }
 
-    @GetMapping("/by/{id}")
-    public List<Veiculo> listarVeiculoId(@PathVariable("id") Long id){
-        return this.veiculoService.listarVeiculoId(id);
-    }
+//    @GetMapping("/by/{id}")
+//    public List<Veiculo> listarVeiculoId(@PathVariable("id") Long id){
+//        return this.veiculoService.listarVeiculoId(id);
+//    }
 }
