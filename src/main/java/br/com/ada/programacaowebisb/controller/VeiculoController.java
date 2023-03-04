@@ -5,7 +5,10 @@ import br.com.ada.programacaowebisb.service.VeiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+//@Controller
 @RequestMapping("/veiculo")
 public class VeiculoController {
     @Autowired
@@ -16,8 +19,8 @@ public class VeiculoController {
         this.veiculoService.createVeiculo(veiculo);
     }
 
-    @GetMapping("/buscar")
-    public Veiculo buscarVeiculo() {
-        return this.veiculoService.buscarVeiculo();
+    @GetMapping("/listar")
+    public List<Veiculo> listarTodos(){
+        return this.veiculoService.listarTodos();
     }
 }

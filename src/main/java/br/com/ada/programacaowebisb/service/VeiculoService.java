@@ -5,6 +5,8 @@ import br.com.ada.programacaowebisb.repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service //irá chamar interface repository
 public class VeiculoService {
 
@@ -15,7 +17,7 @@ public class VeiculoService {
         this.veiculoRepository.save(veiculo);
     }
 
-    public Veiculo buscarVeiculo() {
-        return (Veiculo) this.veiculoRepository.findAll();
+    public List<Veiculo> listarTodos(){
+        return this.veiculoRepository.findAll();
     }
 }
