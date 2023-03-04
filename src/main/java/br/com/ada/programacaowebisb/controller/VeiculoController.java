@@ -23,4 +23,9 @@ public class VeiculoController {
     public List<Veiculo> listarTodos(){
         return this.veiculoService.listarTodos();
     }
+
+    @GetMapping("/by/{id}")
+    public List<Veiculo> listarVeiculoId(@PathVariable("id") Long id){
+        return this.veiculoService.listarVeiculoId(id);
+    }
 }
