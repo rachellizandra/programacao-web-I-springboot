@@ -4,7 +4,6 @@ import br.com.ada.programacaowebisb.model.Veiculo;
 import br.com.ada.programacaowebisb.repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,5 +24,13 @@ public class VeiculoService {
 
     public Optional<Veiculo> listarVeiculoId(Long id){
         return this.veiculoRepository.findById(id);
+    }
+
+    public Optional<Veiculo> buscarVeiculoPlaca(String placa){
+        return this.veiculoRepository.findByPlacaContaining(placa);
+    }
+
+    public void removerVeiculoPorId(Long id) {
+        this.veiculoRepository.deleteById(id);
     }
 }
