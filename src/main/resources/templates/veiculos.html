@@ -32,7 +32,8 @@
       <td th:utext="${veiculo.modelo}">...</td>
       <td th:utext="${veiculo.tipo}">...</td>
       <td th:utext="${veiculo.disponivel}">...</td>
-      <td><a th:href="@{/veiculos/{veiculoId}/edit(veiculoId=${veiculo.id})}">Edit</a></td>
+      <td><a class="btn btn-primary btn-sm"  th:href="@{/veiculos/{veiculoId}/edit(veiculoId=${veiculo.id})}">Edit</a></td>
+      <td><a class="btn btn-danger btn-sm" th:href="@{/veiculos/{veiculoId}/delete(veiculoId=${veiculo.id})}">Delete</a></td>
     </tr>
   </table>
 </div>

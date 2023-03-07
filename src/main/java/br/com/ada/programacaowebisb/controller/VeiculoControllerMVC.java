@@ -28,6 +28,7 @@ public class VeiculoControllerMVC {
 
     @GetMapping("/veiculo/add")
     public String buscarVeiculo(Model model) {
+        model.addAttribute("add", Boolean.TRUE);
         model.addAttribute("veiculo", new Veiculo());
         return "veiculo-add";
     }
@@ -35,6 +36,12 @@ public class VeiculoControllerMVC {
     @PostMapping("/veiculo/add")
     public String criarVeiculo(@ModelAttribute("veiculo") Veiculo veiculo) {
         this.veiculoService.createVeiculo(veiculo);
+        return "redirect:/veiculos";
+    }
+
+    @GetMapping("/veiculos/{veiculoId}/delete")
+    public String deletarVeiculo(@PathVariable("veiculoId") Long veiculoId) {
+        this.veiculoService.removerVeiculoPorId(veiculoId);
         return "redirect:/veiculos";
     }
 
