@@ -1,92 +1,80 @@
 package br.com.ada.programacaowebisb.controller;
 
-import br.com.ada.programacaowebisb.rest.dto.VeiculoDTO;
 import br.com.ada.programacaowebisb.model.Veiculo;
 import br.com.ada.programacaowebisb.service.VeiculoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-@RestController
-//@Controller
-@RequestMapping("/veiculo")
+//@RestController
+@Controller
 public class VeiculoController {
+
     @Autowired
     private VeiculoService veiculoService;
 
-    @PostMapping("/cadastrar") //POST
-    public ResponseEntity<String> createVeiculo(@Valid @RequestBody VeiculoDTO veiculo) {
-        try {
-
-            Veiculo veiculoDB = Veiculo.builder()
-                    .placa(veiculo.getPlaca())
-                    .modelo(veiculo.getModelo())
-                    .disponivel(veiculo.getDisponivel())
-                    .tipo(veiculo.getTipo())
-                    .build();
-
-
-            this.veiculoService.createVeiculo(veiculoDB);
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body("Veículo criado!");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @GetMapping("/veiculos")
+    public ModelAndView veiculos(
+            @RequestParam(defaultValue = "1", value = "page") Integer numeroPagina,
+            @RequestParam(defaultValue = "3", value = "size") Integer tamanhoPagina) {
+        //Model, ModelMap e ModelAndView
+        ModelAndView modelAndView = new ModelAndView("veiculos");
+        Page<Veiculo> veiculoPage = this.veiculoService.listarPaginado(numeroPagina-1, tamanhoPagina);
+        modelAndView.addObject("veiculos", veiculoPage.getContent());
+        modelAndView.addObject("totalPages", veiculoPage.getTotalPages());
+        modelAndView.addObject("currentPage", numeroPagina);
+        modelAndView.addObject("pageSize", veiculoPage.getSize());
+        return modelAndView;
     }
 
-    @GetMapping("/listar")
-    public List<Veiculo> listarTodos(){
-        return this.veiculoService.listarTodos();
+    @GetMapping("/veiculo/add")
+    public String addVeiculo(Model model, Veiculo veiculo) {
+        model.addAttribute("add", Boolean.TRUE);
+        model.addAttribute("veiculo", Objects.nonNull(veiculo) ? veiculo : new Veiculo());
+        return "veiculo-add";
     }
 
-    @GetMapping("/by/{id}")
-    public ResponseEntity<Veiculo> listarVeiculoId(@PathVariable("id") Long id){
-        Optional<Veiculo> optionalVeiculo = this.veiculoService.listarVeiculoId(id);
+    @PostMapping("/veiculo/add")
+    public String criarVeiculo(@Valid @ModelAttribute("veiculo") Veiculo veiculo,
+                               BindingResult result,
+                               Model model) {
 
-        if(optionalVeiculo.isPresent()){
-            return ResponseEntity.ok(optionalVeiculo.get());
-        }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @PutMapping("/atualizar")
-    public ResponseEntity<String> atualizarVeiculo(@RequestBody VeiculoDTO veiculo) {
-        //1 - buscar veiculo pela placa
-        //2 - atualizar veiculo
-
-        try {
-            Optional<Veiculo> optionalVeiculo = this.veiculoService.buscarVeiculoPlaca(veiculo.getPlaca());
-
-            if (optionalVeiculo.isPresent()) {
-                Veiculo veiculoPorPlacaDB = optionalVeiculo.get();
-                Veiculo veiculoAtualizar = Veiculo.builder().id(veiculoPorPlacaDB.getId())
-                        .modelo(veiculo.getModelo())
-                        .marca(veiculo.getMarca())
-                        .placa(veiculo.getPlaca())
-                        .tipo(veiculo.getTipo())
-                        .disponivel(veiculo.getDisponivel())
-                        .build();
-                this.veiculoService.createVeiculo(veiculoAtualizar);
-
-                return ResponseEntity
-                        .ok("Veículo atualizado!");
-            }
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT).build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+        if(result.hasErrors()) {
+            return addVeiculo(model, veiculo);
         }
 
+        this.veiculoService.createVeiculo(veiculo);
+        return "redirect:/veiculos";
     }
 
-    @DeleteMapping("/deletar/{id}")
-    public void removerVeiculo(@PathVariable Long id){
-        this.veiculoService.removerVeiculoPorId(id);
+    @GetMapping("/veiculo/{veiculoId}/delete")
+    public String deletarVeiculo(@PathVariable("veiculoId") Long veiculoId) {
+        this.veiculoService.removerVeiculoPorId(veiculoId);
+        return "redirect:/veiculos";
     }
+
+    @GetMapping("/veiculo/{veiculoId}/edit")
+    public String mostrarEdicaoVeiculo(Model model, @PathVariable("veiculoId") Long veiculoId) {
+        Optional<Veiculo> optionalVeiculo = this.veiculoService.listarVeiculoId(veiculoId);
+        optionalVeiculo.ifPresent(veiculo -> model.addAttribute("veiculo", veiculo));
+        model.addAttribute("add", Boolean.FALSE);
+        return "veiculo-add";
+    }
+
+    @PutMapping("/veiculo/{veiculoId}/edit")
+    public String editarVeiculo(@ModelAttribute("veiculo") Veiculo veiculo,
+                                @PathVariable("veiculoId") Long veiculoId) {
+        veiculo.setId(veiculoId);
+        this.veiculoService.createVeiculo(veiculo);
+        return "redirect:/veiculos";
+    }
+
 }
