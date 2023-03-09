@@ -3,6 +3,9 @@ package br.com.ada.programacaowebisb.service;
 import br.com.ada.programacaowebisb.model.Veiculo;
 import br.com.ada.programacaowebisb.repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +19,11 @@ public class VeiculoService {
 
     public void createVeiculo(Veiculo veiculo){
         this.veiculoRepository.save(veiculo);
+    }
+
+    public Page<Veiculo> listarPaginado(Integer numeroPagina, Integer tamanhoPagina) {
+        return this.veiculoRepository
+                .findAll(PageRequest.of(numeroPagina, tamanhoPagina, Sort.by(Sort.Order.asc("id"))));
     }
 
     public List<Veiculo> listarTodos(){
