@@ -26,4 +26,16 @@ public class VeiculoService {
     public Optional<Veiculo> listarVeiculoId(Long id){
         return this.veiculoRepository.findById(id);
     }
+
+    public Optional<Veiculo> buscarVeiculoPorId(Long id){
+        return this.veiculoRepository.findById(id);
+    }
+
+    public Optional<Veiculo> buscarVeiculoPelaPlaca(String placa) {
+        return this.veiculoRepository.findByPlacaContaining(placa);
+    }
+
+    public void removerVeiculoPorId(Long id) {
+        this.veiculoRepository.deleteById(id);
+    }
 }
